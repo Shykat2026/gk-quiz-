@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>সাধারণ জ্ঞান ও MCQ টেস্ট</title>
+    <style>
+        body {
+            font-family: 'SolaimanLipi', Arial, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .news-box {
+            background: #eef2f7;
+            padding: 15px;
+            border-left: 5px solid #3498db;
+            margin-bottom: 10px;
+            border-radius: 4px;
+        }
+        .quiz-box {
+            background: #fafafa;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            padding: 10px;
+            margin: 8px 0;
+            background: #fff;
+            border: 1px solid #bdc3c7;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: left;
+            font-size: 16px;
+            transition: 0.2s;
+        }
+        .options button:hover {
+            background: #ecf0f1;
+        }
+        .options button.correct {
+            background: #2ecc71;
+            color: white;
+            border-color: #27ae60;
+        }
+        .options button.wrong {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+        }
+        #next-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: 15px;
+        }
+        #next-btn:hover {
+            background: #2980b9;
+        }
+        .score-container {
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>দৈনিক সাধারণ জ্ঞান ও MCQ</h1>
+
+    <!-- সাম্প্রতিক সাধারণ জ্ঞান অংশ -->
+    <div class="section">
+        <h2>সাম্প্রতিক সাধারণ জ্ঞান</h2>
+        <div class="news-box">
+            <strong>চলতি মাস:</strong> সম্প্রতি অনুষ্ঠিত বিভিন্ন জাতীয় ও আন্তর্জাতিক বিষয়ের গুরুত্বপূর্ণ আপডেট এখানে নিয়মিত যুক্ত করতে পারবেন।
+        </div>
+        <div class="news-box">
+            <strong>বিশেষ তথ্য:</strong> আপনার ওয়েবসাইটের ভিজিটরদের জন্য এখানে প্রতিদিনের বা সাম্প্রতিক কারেন্ট অ্যাফেয়ার্স যোগ করুন।
+        </div>
+    </div>
+
+    <hr style="border: 0; border-top: 1px solid #eee; margin: 20px 0;">
+
+    <!-- MCQ টেস্ট অংশ -->
+    <div class="section quiz-box">
+        <h2>সাধারণ জ্ঞান MCQ টেস্ট</h2>
+        <div id="quiz">
+            <div id="question" style="font-size: 18px; font-weight: bold; margin-bottom: 15px;"></div>
+            <div class="options" id="options"></div>
+            <button id="next-btn" style="display:none;" onclick="nextQuestion()">পরবর্তী প্রশ্ন</button>
+        </div>
+        <div id="result" class="score-container" style="display:none;"></div>
+    </div>
+</div>
+
+<script>
+    // এখানে আপনার ইচ্ছামতো প্রশ্ন যোগ করতে পারবেন
+    const quizData = [
+        {
+            question: "বাংলাদেশের জাতীয় ফলের নাম কী?",
+            options: ["আম", "কাঁঠাল", "লিচু", "কলা"],
+            answer: 1
+        },
+        {
+            question: "সংবিধানের কত অনুচ্ছেদে মৌলিক অধিকারের কথা বলা হয়েছে?",
+            options: ["২৭ অনুচ্ছেদ", "নরমাল অনুচ্ছেদ নেই", "২৬ থেকে ৪৪ অনুচ্ছেদ", "কোনোটিই নয়"],
+            answer: 2
+        },
+        {
+            question: "বিশ্বের দীর্ঘতম নদী কোনটি?",
+            options: ["আমাজন", "নীলনদ", "পদ্মা", "মিসিসিপি"],
+            answer: 1
+        }
+    ];
+
+    let currentQuiz = 0;
+    let score = 0;
+
+    const questionEl = document.getElementById("question");
+    const optionsEl = document.getElementById("options");
+    const nextBtn = document.getElementById("next-btn");
+    const resultEl = document.getElementById("result");
+    const quizContainer = document.getElementById("quiz");
+
+    function loadQuiz() {
+        resetState();
+        let currentQuizData = quizData[currentQuiz];
+        questionEl.innerText = (currentQuiz + 1) + ". " + currentQuizData.question;
+
+        currentQuizData.options.forEach((option, index) => {
+            const button = document.createElement("button");
+            button.innerText = option;
+            button.addEventListener("click", () => selectAnswer(button, index));
+            optionsEl.appendChild(button);
+        });
+    }
+
+    function resetState() {
+        nextBtn.style.display = "none";
+        while (optionsEl.firstChild) {
+            optionsEl.removeChild(optionsEl.firstChild);
+        }
+    }
+
+    function selectAnswer(button, index) {
+        const correctIndex = quizData[currentQuiz].answer;
+        const buttons = optionsEl.children;
+
+        if (index === correctIndex) {
+            button.classList.add("correct");
+            score++;
+        } else {
+            button.classList.add("wrong");
+            buttons[correctIndex].classList.add("correct");
+        }
+
+        // সব বাটন ডিজেবল করে দেওয়া
+        for (let btn of buttons) {
+            btn.disabled = true;
+        }
+
+        nextBtn.style.display = "block";
+    }
+
+    function nextQuestion() {
+        currentQuiz++;
+        if (currentQuiz < quizData.length) {
+            loadQuiz();
+        } else {
+            quizContainer.style.display = "none";
+            resultEl.style.display = "block";
+            resultEl.innerText = `কুইজ শেষ! আপনার মোট স্কোর: ${score} / ${quizData.length}`;
+        }
+    }
+
+    loadQuiz();
+</script>
+
+</body>
+</html>
